@@ -14,11 +14,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum paymentStatus {
+enum orderStatus {
   PENDING
   COMPLETED
   FAILED
 }
+
+enum paymentStatus {
+  PENDING
+  SETTLEMENT
+  EXPIRE
+}
+
 
 
 model User {
@@ -78,7 +85,7 @@ model Product {
   orderItems OrderItems[]
   carts      Cart[]
   reviews    Review[]
-  
+
   @@map("products")
 }
 
@@ -86,12 +93,14 @@ model Order {
   id        Int      @id @default(autoincrement())
   userId    Int
   total     Float
-  status    paymentStatus @default(PENDING)   
+  status    orderStatus @default(PENDING)   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user       User       @relation(fields: [userId], references: [id])
+
   orderItems OrderItems[]
+  payment    Payment?
 
   @@map("orders")
 }
@@ -121,4 +130,16 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id])
 
   @@map("reviews")
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  orderId   Int @unique
+  amount    Float
+  status    paymentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  order     Order    @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
 }

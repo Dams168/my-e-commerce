@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "public"."paymentStatus" AS ENUM ('PENDING', 'COMPLETED', 'FAILED');
+CREATE TYPE "public"."orderStatus" AS ENUM ('PENDING', 'COMPLETED', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "public"."paymentStatus" AS ENUM ('PENDING', 'SETTLEMENT', 'EXPIRE');
 
 -- CreateTable
 CREATE TABLE "public"."users" (
@@ -53,7 +56,7 @@ CREATE TABLE "public"."orders" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "total" DOUBLE PRECISION NOT NULL,
-    "status" "public"."paymentStatus" NOT NULL DEFAULT 'PENDING',
+    "status" "public"."orderStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -83,11 +86,25 @@ CREATE TABLE "public"."reviews" (
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "public"."payments" (
+    "id" SERIAL NOT NULL,
+    "orderId" INTEGER NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "status" "public"."paymentStatus" NOT NULL DEFAULT 'PENDING',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_key" ON "public"."categories"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_orderId_key" ON "public"."payments"("orderId");
 
 -- AddForeignKey
 ALTER TABLE "public"."carts" ADD CONSTRAINT "carts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -115,3 +132,6 @@ ALTER TABLE "public"."reviews" ADD CONSTRAINT "reviews_userId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "public"."reviews" ADD CONSTRAINT "reviews_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."payments" ADD CONSTRAINT "payments_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
