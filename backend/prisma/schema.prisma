@@ -13,3 +13,112 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum paymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+  carts     Cart[]
+  reviews   Review[]
+
+  @@map("users")
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@map("carts")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  parentId  Int?
+
+  parent    Category? @relation("parent", fields: [parentId], references: [id])
+  children  Category[] @relation("parent")
+
+  products Product[]     
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  stock       Int     @default(0)
+  imageUrl    String?
+  categoryId  Int 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  orderItems OrderItems[]
+  carts      Cart[]
+  reviews    Review[]
+  
+  @@map("products")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  total     Float
+  status    paymentStatus @default(PENDING)   
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id])
+  orderItems OrderItems[]
+
+  @@map("orders")
+}
+
+model OrderItems {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int      @default(1)
+  Price     Float
+
+  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+
+  @@map("order_items")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  rating    Int      @default(5)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
+}
