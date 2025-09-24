@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { validate } from "../validation/validation.js";
-import { addToCartValidation } from "../validation/cart-validation.js";
+import { addToCartValidation, getCartValidation } from "../validation/cart-validation.js";
+import { ResponseError } from "../error/response-error.js";
 const prisma = new PrismaClient();
 
 const addToCart = async (request) => {
@@ -39,9 +40,33 @@ const addToCart = async (request) => {
             }
         }
     })
+}
 
+const getCartUser = async (request) => {
+    const getCartRequest = validate(getCartValidation, request);
+
+    const cart = await prisma.cart.findMany({
+        where: {
+            id: getCartRequest.id
+        },
+        select: {
+            quantity: true,
+            product: {
+                select: {
+                    name: true,
+                    price: true,
+                    imageUrl: true,
+                }
+            }
+        }
+    })
+    if (!cart) {
+        throw new ResponseError(404, 'Cart not found');
+    }
+    return cart;
 }
 
 export default {
-    addToCart
+    addToCart,
+    getCartUser
 }

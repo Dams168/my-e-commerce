@@ -5,3 +5,7 @@ export const addToCartValidation = Joi.object({
     quantity: Joi.number().integer().positive().required(),
     userId: Joi.number().integer().positive().required()
 })
+
+export const getCartValidation = Joi.object({
+    userId: Joi.number().integer().positive().required()
+})

@@ -11,4 +11,19 @@ const addToCart = async (req, res, next) => {
     }
 }
 
-export default { addToCart }
+const getCartUser = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const result = await cartService.getCartUser({ userId });
+        res.status(200).json({
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export default {
+    addToCart,
+    getCartUser
+}
