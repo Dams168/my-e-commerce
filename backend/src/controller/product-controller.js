@@ -13,6 +13,19 @@ const getAllProducts = async (req, res, next) => {
     }
 }
 
+const getProductById = async (req, res, next) => {
+    try {
+        const productId = req.params.id;
+        const result = await productService.getById(productId);
+        res.status(200).json({
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
-    getAllProducts
+    getAllProducts,
+    getProductById
 }
