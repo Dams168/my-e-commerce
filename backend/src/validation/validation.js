@@ -1,6 +1,6 @@
-import { ResponseError } from "../error/response-error";
+import { ResponseError } from "../error/response-error.js";
 
-export const validateRequest = (schema, request) => {
+export const validate = (schema, request) => {
     const result = schema.validate(request, {
         abortEarly: false
     });
