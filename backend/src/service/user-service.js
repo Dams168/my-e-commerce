@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { validate } from "../validation/validation.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from 'bcrypt';
-import { registerValidation } from "../validation/user-validation.js";
+import jwt from 'jsonwebtoken';
+import { loginValidation, registerValidation } from "../validation/user-validation.js";
 const prisma = new PrismaClient();
 
 const register = async (request) => {
@@ -25,4 +26,33 @@ const register = async (request) => {
     return user;
 }
 
-export default { register }
+const login = async (request) => {
+    const loginRequest = validate(loginValidation, request);
+
+    const user = await prisma.user.findFirst({
+        where: {
+            email: loginRequest.email
+        },
+        select: {
+            email: true,
+            password: true,
+        }
+    })
+
+    if (!user) {
+        throw new ResponseError(400, 'Email or password is incorrect');
+    }
+
+    const isPasswordValid = await bcrypt.compare(loginRequest.password, user.password);
+    if (!isPasswordValid) {
+        throw new ResponseError(400, 'Email or password is incorrect');
+    }
+
+    const accessToken = jwt.sign({
+        name: user.name,
+        email: user.email
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return { user, accessToken };
+}
+
+export default { register, login }
