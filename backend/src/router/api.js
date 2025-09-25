@@ -13,7 +13,9 @@ apiRouter.put('/cart/:cartId', authMiddleware, cartController.updateCart)
 apiRouter.delete('/cart/:cartId', authMiddleware, cartController.removeCart)
 
 // Payment routes
+apiRouter.post('/checkout/cart', authMiddleware, paymentController.checkoutCart)
 apiRouter.post('/checkout/:productId', authMiddleware, paymentController.checkoutProduct)
+
 
 //midtrans notification
 apiRouter.post('/midtrans/notification', midtransController.midtransNotification)

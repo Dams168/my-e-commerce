@@ -17,6 +17,23 @@ const checkoutProduct = async (req, res, next) => {
     }
 }
 
+const checkoutCart = async (req, res, next) => {
+    try {
+        console.log(">>> Controller masuk", req.body, req.user);
+        const result = await paymentService.checkoutCart({
+            cartItemIds: req.body.cartItemIds,
+            userId: req.user.id
+        });
+
+        res.status(201).json({
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
-    checkoutProduct
+    checkoutProduct,
+    checkoutCart
 }
