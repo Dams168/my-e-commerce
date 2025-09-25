@@ -9,3 +9,12 @@ export const addToCartValidation = Joi.object({
 export const getCartValidation = Joi.object({
     userId: Joi.number().integer().positive().required()
 })
+
+export const updateCartValidation = Joi.object({
+    cartId: Joi.number().integer().positive().required(),
+    quantity: Joi.number().integer().positive().required(),
+})
+
+export const removeCartValidation = Joi.object({
+    cartId: Joi.number().integer().positive().required(),
+})
