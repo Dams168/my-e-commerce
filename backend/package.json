@@ -20,6 +20,7 @@
     "express": "^5.1.0",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
-    "midtrans-client": "^1.4.3"
+    "midtrans-client": "^1.4.3",
+    "moment-timezone": "^0.6.0"
   }
 }

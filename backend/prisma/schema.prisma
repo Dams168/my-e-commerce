@@ -109,7 +109,7 @@ model OrderItems {
   orderId   Int
   productId Int
   quantity  Int      @default(1)
-  Price     Float
+  price     Float
 
   product   Product  @relation(fields: [productId], references: [id])
   order     Order    @relation(fields: [orderId], references: [id])
@@ -132,13 +132,15 @@ model Review {
 }
 
 model Payment {
-  id        Int      @id @default(autoincrement())
-  orderId   Int @unique
-  amount    Float
-  status    paymentStatus @default(PENDING)
-  createdAt DateTime @default(now())
+  id              Int            @id @default(autoincrement())
+  orderId         Int            @unique
+  transactionId   String?        
+  status          paymentStatus  @default(PENDING)
+  paymentType     String?        
+  grossAmount     Float
+  transactionTime DateTime? 
 
-  order     Order    @relation(fields: [orderId], references: [id])
+  order           Order          @relation(fields: [orderId], references: [id])
 
   @@map("payments")
 }
