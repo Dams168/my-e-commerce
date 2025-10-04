@@ -3,21 +3,24 @@ import cartController from '../controller/cart-controller.js';
 import { authMiddleware } from '../middleware/auth-middleware.js';
 import midtransController from '../controller/midtrans-controller.js';
 import paymentController from '../controller/payment-controller.js';
+import categoryController from '../controller/category-controller.js';
 
 const apiRouter = express.Router();
 
 // Cart routes
-apiRouter.post('/addtocart', authMiddleware, cartController.addToCart)
-apiRouter.get('/cart/:userId', authMiddleware, cartController.getCartUser)
-apiRouter.put('/cart/:cartId', authMiddleware, cartController.updateCart)
-apiRouter.delete('/cart/:cartId', authMiddleware, cartController.removeCart)
+apiRouter.post('/addtocart', authMiddleware, cartController.addToCart);
+apiRouter.get('/cart/:userId', authMiddleware, cartController.getCartUser);
+apiRouter.put('/cart/:cartId', authMiddleware, cartController.updateCart);
+apiRouter.delete('/cart/:cartId', authMiddleware, cartController.removeCart);
 
 // Payment routes
-apiRouter.post('/checkout/cart', authMiddleware, paymentController.checkoutCart)
-apiRouter.post('/checkout/:productId', authMiddleware, paymentController.checkoutProduct)
+apiRouter.post('/checkout/cart', authMiddleware, paymentController.checkoutCart);
+apiRouter.post('/checkout/:productId', authMiddleware, paymentController.checkoutProduct);
 
+// Category routes
+apiRouter.get('/categories', categoryController.getAllCategories);
 
 //midtrans notification
-apiRouter.post('/midtrans/notification', midtransController.midtransNotification)
+apiRouter.post('/midtrans/notification', midtransController.midtransNotification);
 
 export { apiRouter };
